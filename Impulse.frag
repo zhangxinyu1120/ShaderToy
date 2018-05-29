@@ -80,6 +80,194 @@ float blinnWyvillCosineApproximation (float x){
   return y;
 }
 
+
+
+// http://www.flong.com/texts/code/shapers_poly/
+
+//------------------------------------------------
+// 这个座位形函数是通过连接两个三阶多项式（立方体）曲线形成的。 
+// 曲线在单位正方形的控制坐标（a，b）处遇到水平拐点。
+float doubleCubicSeat (float x, float a, float b){
+  
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  float min_param_b = 0.0;
+  float max_param_b = 1.0;
+  a = min(max_param_a, max(min_param_a, a));  
+  b = min(max_param_b, max(min_param_b, b)); 
+  
+  float y = 0.0;
+  if (x <= a)
+  {
+    y = b - b*pow(1.-x/a, 3.0);
+  } 
+  else 
+  {
+    y = b + (1.-b)*pow((x-a)/(1.-a), 3.0);
+  }
+
+  return y;
+}
+
+//指数造型函数
+//-----------------------------------------
+float exponentialEasing (float x, float a){
+  
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  a = max(min_param_a, min(max_param_a, a));
+  
+  if (a < 0.5){
+    // emphasis
+    a = 2.0*(a);
+    float y = pow(x, a);
+    return y;
+  } else {
+    // de-emphasis
+    a = 2.0*(a-0.5);
+    float y = pow(x, 1.0/(1.-a));
+    return y;
+  }
+}
+
+//---------------------------------------------
+float doubleExponentialSeat (float x, float a){
+
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  a = min(max_param_a, max(min_param_a, a)); 
+
+  float y = 0.;
+  if (x<=0.5){
+    y = (pow(2.0*x, 1.-a))/2.0;
+  } else {
+    y = 1.0 - (pow(2.0*(1.0-x), 1.-a))/2.0;
+  }
+  return y;
+}
+
+//------------------------------------------------
+float doubleExponentialSigmoid (float x, float a){
+
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  a = min(max_param_a, max(min_param_a, a));
+  a = 1.0-a; // for sensible results
+  
+  float y = 0.;
+  if (x<=0.5){
+    y = (pow(2.0*x, 1.0/a))/2.0;
+  } else {
+    y = 1.0 - (pow(2.0*(1.0-x), 1.0/a))/2.0;
+  }
+  return y;
+}
+
+//---------------------------------------
+float logisticSigmoid (float x, float a){
+  // n.b.: this Logistic Sigmoid has been normalized.
+
+  float epsilon = 0.0001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  a = max(min_param_a, min(max_param_a, a));
+  a = (1./(1.-a) - 1.);
+
+  float A = 1.0 / (1.0 + exp(0. -((x-0.5)*a*2.0)));
+  float B = 1.0 / (1.0 + exp(a));
+  float C = 1.0 / (1.0 + exp(0.-a)); 
+  float y = (A-B)/(C-B);
+  return y;
+}
+
+//------------------------------
+float circularEaseIn (float x){
+  float y = 1. - sqrt(1. - x*x);
+  return y;
+}
+
+//------------------------------
+float circularEaseOut (float x){
+  float y = sqrt(1. - sqrt(1. - x));
+  return y;
+}
+
+//----------------------------------------
+float doubleCircleSeat (float x, float a){
+  float min_param_a = 0.0;
+  float max_param_a = 1.0;
+  a = max(min_param_a, min(max_param_a, a)); 
+
+  float y = 0.;
+  if (x<=a){
+    y = sqrt(sqrt(a) - sqrt(x-a));
+  } else {
+    y = 1. - sqrt(sqrt(1.-a) - sqrt(x-a));
+  }
+  return y;
+}
+//-------------------------------------------
+float doubleCircleSigmoid (float x, float a){
+  float min_param_a = 0.0;
+  float max_param_a = 1.0;
+  a = max(min_param_a, min(max_param_a, a)); 
+
+  float y = 0.;
+  if (x<=a){
+    y = a - sqrt(a*a - x*x);
+  } else {
+    y = a + sqrt(sqrt(1.-a) - sqrt(x-1.));
+  }
+  return y;
+}
+//---------------------------------------------------
+float doubleEllipticSeat (float x, float a, float b){
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  float min_param_b = 0.0;
+  float max_param_b = 1.0;
+  a = max(min_param_a, min(max_param_a, a)); 
+  b = max(min_param_b, min(max_param_b, b)); 
+
+  float y = 0.;
+  if (x<=a){
+    y = (b/a) * sqrt(sqrt(a) - sqrt(x-a));
+  } else {
+    y = 1.- ((1.-b)/(1.-a))*sqrt(sqrt(1.-a) - sqrt(x-a));
+  }
+  return y;
+}
+//------------------------------------------------------
+float doubleEllipticSigmoid (float x, float a, float b){
+
+  float epsilon = 0.00001;
+  float min_param_a = 0.0 + epsilon;
+  float max_param_a = 1.0 - epsilon;
+  float min_param_b = 0.0;
+  float max_param_b = 1.0;
+  a = max(min_param_a, min(max_param_a, a)); 
+  b = max(min_param_b, min(max_param_b, b));
+ 
+  float y = 0.;
+  if (x<=a){
+    y = b * (1. - (sqrt(sqrt(a) - sqrt(x))/a));
+  } else {
+    y = b + ((1.-b)/(1.-a))*sqrt(sqrt(1.-a) - sqrt(x-1.));
+  }
+  return y;
+}
+
+
+
+
+
+
+
 /***************************end********************************/
 void main() {
     vec2 st = gl_FragCoord.xy/u_resolution;
@@ -106,7 +294,11 @@ void main() {
     //y = clamp(x,0.0,1.0); // 把 x 的值限制在 0.0 到 1.0
     //y = min(0.0,x);   // 返回 x 和 0.0 中的较小值
     //y = max(0.0,x);   // 返回 x 和 0.0 中的较大值 
-    float y=blinnWyvillCosineApproximation(PI * st.x);
+    // float y=blinnWyvillCosineApproximation(PI * st.x);
+
+    // float y=doubleCubicSeat(st.x, 0.2, 0.5);
+    // float y=exponentialEasing(st.x,.5);
+    float y = circularEaseIn(st.x);
     vec3 color = vec3(y);
 
     float pct = plot(st,y);
