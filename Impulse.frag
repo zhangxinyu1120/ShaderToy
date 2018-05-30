@@ -3,6 +3,10 @@ precision mediump float;
 #endif
 #define PI 3.14
 
+uniform vec3      iResolution;           // viewport resolution (in pixels)
+uniform float     iTime;                 // shader playback time (in seconds)
+
+
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
